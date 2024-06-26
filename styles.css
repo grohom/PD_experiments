@@ -1,0 +1,27 @@
+body {
+    font-family: helvetica, arial, sans-serif;
+    background-color: #2D2D2D;
+    color: white;
+}
+
+#content {
+    display: flex;
+    flex-direction: row;
+}
+
+#explanation {
+}
+
+#simulation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+/*    text-align: right;*/
+    font-size: 0.9em;
+/*    margin: 1em;*/
+}
+
+#graph {
+    margin-top: 1em;
+}
+
