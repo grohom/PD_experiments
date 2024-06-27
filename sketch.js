@@ -12,8 +12,8 @@ let total_payoff = 0;
 
 let normalColor;
 let reverseColor;
-let lineColor;
-let line2Color;
+let hLineColor;
+let vLineColor;
 let canvas;
 
 function setup() {
@@ -22,8 +22,8 @@ function setup() {
 
     normalColor = color(0, 255, 0, 80);
     reverseColor = color(255, 100, 0, 80);
-    lineColor = color(255, 255, 255, 50);
-    line2Color = color(255, 255, 0, 50);
+    hLineColor = color(255, 255, 255, 50);
+    vLineColor = color(255, 255, 0, 50);
 
     restart();
 
@@ -36,10 +36,10 @@ function draw() {
 
     background(0);
 
-    stroke(lineColor);
+    stroke(hLineColor);
     line(0, graph_cooperations, graphSize, graph_cooperations);
 
-    stroke(line2Color);
+    stroke(vLineColor);
     line(graph_payoff, 0, graph_payoff, graphSize);
 
     noStroke();
@@ -62,15 +62,16 @@ function mutate(value, amplitude, min_val, max_val) {
 }
 
 class Agent {
-    constructor() {
-        this.reverse = random() < 0.5;
-        this.p0 = random();
-        this.learn = random();
+    constructor(reverse=null, p0=null, learn=null) {
+        this.reverse = reverse === null ? random() < 0.5 : reverse;
+        this.p0 = p0 === null ? random() : p0;
+        this.learn = learn === null ? random() : learn;
 
         this.p = this.p0;
         this.payoff = 0;
         this.avg_payoff = 0;
         this.interactions = 0;
+        this.cooperations = 0;
         this.move = null;
         this.memory = new Map();
     }
@@ -90,7 +91,10 @@ class Agent {
         let prediction = int(random() < p);
         this.move = this.instinct(prediction);
         this.interactions++;
-        if (this.move === 0) cooperations++;
+        if (this.move === 0) {
+            this.cooperations++;
+            cooperations++;
+        }
     }
 
     instinct(prediction) {
@@ -105,8 +109,9 @@ class Agent {
         this.p = this.p0;
         this.payoff = 0;
         this.interactions = 0;
-        this.memory = new Map();
+        this.cooperations = 0;
         this.move = null;
+        this.memory = new Map();
     }
 
 }
