@@ -3,6 +3,8 @@ const numAgents = 50;
 const numInteractions = 5000;
 const killFraction = 0.33;
 const fraction = Math.floor(killFraction * numAgents);
+const kx = graphSize/numInteractions/2/2;
+const ky = graphSize/numInteractions/2;
 
 let agents = [];
 let cooperations = 0;
@@ -29,8 +31,8 @@ function setup() {
 
 function draw() {
     play_game();
-    let graph_cooperations = (1 - cooperations/numInteractions/2)*graphSize;
-    let graph_payoff = total_payoff/numInteractions/2/2*graphSize;
+    let graph_payoff = total_payoff*kx;
+    let graph_cooperations = graphSize - cooperations*ky;
 
     background(0);
 
