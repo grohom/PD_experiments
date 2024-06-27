@@ -29,7 +29,7 @@ function setup() {
 
 function draw() {
     play_game();
-    let graph_cooperations = cooperations/numInteractions/2*graphSize;
+    let graph_cooperations = (1 - cooperations/numInteractions/2)*graphSize;
     let graph_payoff = total_payoff/numInteractions/2/2*graphSize;
 
     background(0);
@@ -43,7 +43,7 @@ function draw() {
     noStroke();
     agents.forEach(agent => {
         fill(agent.reverse ? reverseColor : normalColor);
-        ellipse(agent.learn*graphSize, (1 - agent.p0)*graphSize, 4, 4);
+        ellipse(agent.learn*graphSize, agent.p0*graphSize, 4, 4);
     });
 
 }
