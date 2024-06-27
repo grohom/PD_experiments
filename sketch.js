@@ -1,7 +1,7 @@
-const graphSize = 500;
 const numAgents = 50;
 const numInteractions = 5000;
-const killFraction = 0.33;
+const killFraction = 1/3;
+const graphSize = 500;
 const fraction = Math.floor(killFraction * numAgents);
 const kx = graphSize/numInteractions/2/2;
 const ky = graphSize/numInteractions/2;
@@ -66,35 +66,38 @@ class Agent {
         this.reverse = reverse === null ? random() < 0.5 : reverse;
         this.p0 = p0 === null ? random() : p0;
         this.learn = learn === null ? random() : learn;
+        this.reset();
+    }
 
+    reset() {
         this.p = this.p0;
         this.payoff = 0;
         this.avg_payoff = 0;
         this.interactions = 0;
         this.cooperations = 0;
-        this.move = null;
         this.memory = new Map();
     }
 
-    observe(other) {
+    observe(other, action) {
         let p = this.memory.get(other);
-        p += this.learn*(other.move - p);
+        p += this.learn*(action - p);
         this.memory.set(other, p);
 
-        this.p += this.learn*(other.move - this.p);
+        this.p += this.learn*(action - this.p);
     }
 
-    play(other) {
+    interact(other) {
         let p = this.p;
         if (this.memory.has(other)) p = this.memory.get(other);
         else this.memory.set(other, p);
         let prediction = int(random() < p);
-        this.move = this.instinct(prediction);
+        action = this.instinct(prediction);
         this.interactions++;
-        if (this.move === 0) {
+        if (action === 0) {
             this.cooperations++;
             cooperations++;
         }
+        return action;
     }
 
     instinct(prediction) {
@@ -106,12 +109,7 @@ class Agent {
         this.reverse = other.reverse;
         this.p0 = mutate(other.p0, 0.015, 0, 1);
         this.learn = mutate(other.learn, 0.015, 0, 1);
-        this.p = this.p0;
-        this.payoff = 0;
-        this.interactions = 0;
-        this.cooperations = 0;
-        this.move = null;
-        this.memory = new Map();
+        this.reset();
     }
 
 }
@@ -119,9 +117,9 @@ class Agent {
 function play_game() {
     agents.forEach(agent => agent.avg_payoff = agent.interactions ? agent.payoff/agent.interactions : 0);
     agents.sort((a, b) => b.avg_payoff - a.avg_payoff);
-    for (let ia = 0; ia < fraction; ia++) {
-        good = agents[ia];
-        bad = agents[numAgents - ia - 1];
+    for (let i = 0; i < fraction; i++) {
+        good = agents[i];
+        bad = agents[numAgents - i - 1];
         agents.forEach(agent => agent.memory.delete(bad));
         bad.replace_with_child_of(good);
     }
@@ -131,12 +129,12 @@ function play_game() {
         let a = random(agents);
         let b = random(agents);
         while (a === b) b = random(agents);
-        a.play(b);
-        b.play(a);
-        a.observe(b);
-        b.observe(a);
-        if (a.move === 0) {
-            if (b.move === 0) {
+        actionA = a.interact(b);
+        actionB = b.interact(a);
+        a.observe(b, actionB);
+        b.observe(a, actionA);
+        if (actionA === 0) {
+            if (actionB === 0) {
                 a.payoff += 2;
                 b.payoff += 2;
                 total_payoff += 4;
@@ -147,7 +145,7 @@ function play_game() {
             }
         }
         else {
-            if (b.move === 0) {
+            if (actionB === 0) {
                 a.payoff += 3;
                 total_payoff += 3;
             }
