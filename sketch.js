@@ -1,4 +1,4 @@
-const numAgents = 50;
+const numAgents = 100;
 const numInteractions = 5000;
 const killFraction = 1/3;
 const graphSize = 500;
