@@ -30,7 +30,7 @@ function setup() {
 }
 
 function draw() {
-    play_game();
+    play_round();
     let graph_payoff = total_payoff*kx;
     let graph_cooperations = graphSize - cooperations*ky;
 
@@ -53,6 +53,26 @@ function draw() {
 function restart() {
     agents = [];
     for (let i = 0; i < numAgents; i++) agents.push(new Agent());
+    // Nice Tit For Tat
+    agents[0].immortal = true;
+    agents[0].reverse = false;
+    agents[0].learn = 1;
+    agents[0].p0 = 0;
+    // Cooperator
+    agents[1].immortal = true;
+    agents[1].reverse = false;
+    agents[1].learn = 0;
+    agents[1].p0 = 0;
+    // Defector
+    agents[2].immortal = true;
+    agents[2].reverse = false;
+    agents[2].learn = 0;
+    agents[2].p0 = 1;
+    // Nasty Tit For Tat
+    agents[3].immortal = true;
+    agents[3].reverse = false;
+    agents[3].learn = 1;
+    agents[3].p0 = 1;
 }
 
 document.getElementById('restart-button').addEventListener('click', restart);
@@ -63,6 +83,7 @@ function mutate(value, amplitude, min_val, max_val) {
 
 class Agent {
     constructor(reverse=null, p0=null, learn=null) {
+        this.immortal = false;
         this.reverse = reverse === null ? random() < 0.5 : reverse;
         this.p0 = p0 === null ? random() : p0;
         this.learn = learn === null ? random() : learn;
@@ -91,7 +112,7 @@ class Agent {
         if (this.memory.has(other)) p = this.memory.get(other);
         else this.memory.set(other, p);
         let prediction = int(random() < p);
-        action = this.instinct(prediction);
+        let action = this.instinct(prediction);
         this.interactions++;
         if (action === 0) {
             this.cooperations++;
@@ -114,12 +135,13 @@ class Agent {
 
 }
 
-function play_game() {
+function play_round() {
     agents.forEach(agent => agent.avg_payoff = agent.interactions ? agent.payoff/agent.interactions : 0);
     agents.sort((a, b) => b.avg_payoff - a.avg_payoff);
     for (let i = 0; i < fraction; i++) {
         good = agents[i];
         bad = agents[numAgents - i - 1];
+        if (bad.immortal) continue;
         agents.forEach(agent => agent.memory.delete(bad));
         bad.replace_with_child_of(good);
     }
@@ -129,8 +151,8 @@ function play_game() {
         let a = random(agents);
         let b = random(agents);
         while (a === b) b = random(agents);
-        actionA = a.interact(b);
-        actionB = b.interact(a);
+        let actionA = a.interact(b);
+        let actionB = b.interact(a);
         a.observe(b, actionB);
         b.observe(a, actionA);
         if (actionA === 0) {
