@@ -140,6 +140,7 @@ function play_round() {
     agents.sort((a, b) => b.avg_payoff - a.avg_payoff);
     for (let i = 0; i < fraction; i++) {
         good = agents[i];
+        if (good.immortal) continue;
         bad = agents[numAgents - i - 1];
         if (bad.immortal) continue;
         agents.forEach(agent => agent.memory.delete(bad));
