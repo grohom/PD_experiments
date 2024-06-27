@@ -42,15 +42,6 @@ function draw() {
     stroke(vLineColor);
     line(graph_payoff, 0, graph_payoff, graphSize);
 
-    // if key "T" is pressed, create_TFT()
-    if (keyIsDown(84)) create_TFT(random(agents));
-    // if key "C" is pressed, create_cooperator()
-    if (keyIsDown(67)) create_cooperator(random(agents));
-    // if key "D" is pressed, create_defector()
-    if (keyIsDown(68)) create_defector(random(agents));
-    // if key "N" is pressed, create_nasty_TFT()
-    if (keyIsDown(78)) create_nasty_TFT(random(agents));
-
     noStroke();
     agents.forEach(agent => {
         fill(agent.reverse ? reverseColor : normalColor);
@@ -160,6 +151,15 @@ function play_round() {
         agents.forEach(agent => agent.memory.delete(bad));
         bad.replace_with_child_of(good);
     }
+    // if key "T" is pressed, create_TFT()
+    if (keyIsDown(84)) create_TFT(random(agents));
+    // if key "C" is pressed, create_cooperator()
+    if (keyIsDown(67)) create_cooperator(random(agents));
+    // if key "D" is pressed, create_defector()
+    if (keyIsDown(68)) create_defector(random(agents));
+    // if key "N" is pressed, create_nasty_TFT()
+    if (keyIsDown(78)) create_nasty_TFT(random(agents));
+
     cooperations = 0;
     total_payoff = 0;
     for (let i = 0; i < numInteractions; i++) {
