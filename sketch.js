@@ -42,6 +42,15 @@ function draw() {
     stroke(vLineColor);
     line(graph_payoff, 0, graph_payoff, graphSize);
 
+    // if key "T" is pressed, create_TFT()
+    if (keyIsDown(84)) create_TFT(random(agents));
+    // if key "C" is pressed, create_cooperator()
+    if (keyIsDown(67)) create_cooperator(random(agents));
+    // if key "D" is pressed, create_defector()
+    if (keyIsDown(68)) create_defector(random(agents));
+    // if key "N" is pressed, create_nasty_TFT()
+    if (keyIsDown(78)) create_nasty_TFT(random(agents));
+
     noStroke();
     agents.forEach(agent => {
         fill(agent.reverse ? reverseColor : normalColor);
@@ -53,23 +62,35 @@ function draw() {
 function restart() {
     agents = [];
     for (let i = 0; i < numAgents; i++) agents.push(new Agent());
-    // Nice Tit For Tat
-    agents[0].reverse = false;
-    agents[0].learn = 1;
-    agents[0].p0 = 0;
-    // Cooperator
-    agents[1].reverse = false;
-    agents[1].learn = 0;
-    agents[1].p0 = 0;
-    // Defector
-    agents[2].reverse = false;
-    agents[2].learn = 0;
-    agents[2].p0 = 1;
-    // Nasty Tit For Tat
-    agents[3].reverse = false;
-    agents[3].learn = 1;
-    agents[3].p0 = 1;
 }
+
+function create_TFT(agent) {
+    agent.reverse = false;
+    agent.learn = 1;
+    agent.p0 = 0;
+    agent.reset();
+};
+
+function create_cooperator(agent) {
+    agent.reverse = false;
+    agent.learn = 0;
+    agent.p0 = 0;
+    agent.reset();
+};
+
+function create_defector(agent) {
+    agent.reverse = false;
+    agent.learn = 0;
+    agent.p0 = 1;
+    agent.reset();
+};
+
+function create_nasty_TFT(agent) {
+    agent.reverse = false;
+    agent.learn = 1;
+    agent.p0 = 1;
+    agent.reset();
+};
 
 document.getElementById('restart-button').addEventListener('click', restart);
 
