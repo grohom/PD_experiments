@@ -55,6 +55,8 @@ function restart() {
     for (let i = 0; i < numAgents; i++) agents.push(new Agent());
 }
 
+document.getElementById('restart-button').addEventListener('click', restart);
+
 function create_TFT(agent) {
     agent.reverse = false;
     agent.learn = 1;
@@ -83,7 +85,12 @@ function create_nasty_TFT(agent) {
     agent.reset();
 };
 
-document.getElementById('restart-button').addEventListener('click', restart);
+function create_from_mouse(agent) {
+    // agent.reverse = false;
+    agent.learn = map(mouseX, 0, width, 0, 1);
+    agent.p0 = map(mouseY, 0, height, 0, 1);
+    agent.reset();
+};
 
 function mutate(value, amplitude, min_val, max_val) {
     return random(max(min_val, value - amplitude), min(max_val, value + amplitude));
@@ -151,6 +158,7 @@ function play_round() {
         agents.forEach(agent => agent.memory.delete(bad));
         bad.replace_with_child_of(good);
     }
+
     // if key "T" is pressed, create_TFT()
     if (keyIsDown(84)) create_TFT(random(agents));
     // if key "C" is pressed, create_cooperator()
@@ -159,6 +167,8 @@ function play_round() {
     if (keyIsDown(68)) create_defector(random(agents));
     // if key "N" is pressed, create_nasty_TFT()
     if (keyIsDown(78)) create_nasty_TFT(random(agents));
+    // if mouse is pressed, create a new agent with learn and p0 given by the mouse position
+    if (mouseIsPressed) create_from_mouse(random(agents));
 
     cooperations = 0;
     total_payoff = 0;
