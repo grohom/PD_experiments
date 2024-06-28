@@ -12,7 +12,7 @@
     <div id="content">
 
         <div id="simulation">
-            <div id="gugu">
+            <div id="graph-group">
                 <img id="bgnd" src="graphs.svg">
                 <div id="graph"></div>
             </div>
@@ -26,6 +26,12 @@
                 <br>
                 <input type="range" id="kill-fraction" min="0.01" max="0.5" step="0.01" value="0.33">
                 <label for="kill-fraction">kill <span class="fraction-text">33</span>% of the population</label>
+                <br>
+                <input type="text" id="random-seed" value="42">
+                <label for="random-seed">seed</label>
+                <input type="checkbox" id="randomize-seed" checked="checked">
+                <label for="randomize-seed">randomize</label>
+
             </div>
         </div>
 
@@ -87,6 +93,8 @@
             </ul>
 
             <p>After changing some parameters, press <code>R</code> to restart (or click the button).</p>
+
+            <p>Each time you (re)start, a new random seed will be generated. If you want keep the seed (to replay a certain evolution), deselect the "randomize" checkbox. You can also paste some seed you liked and saved earlier.</p>
             
         </div>
 

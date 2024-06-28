@@ -12,6 +12,7 @@ let kx;
 let ky;
 
 let agentColor;
+let statsColor;
 let hLineColor;
 let canvas;
 let stats;
@@ -20,6 +21,8 @@ const numAgentsSlider = document.getElementById('num-agents');
 const numInteractionsSlider = document.getElementById('num-interactions');
 const killFractionSlider = document.getElementById('kill-fraction');
 const restartButton = document.getElementById('restart-button');
+const seed = document.getElementById('random-seed');
+const randomizeSeed = document.getElementById('randomize-seed');
 const nAgentsText = [...document.getElementsByClassName('nagents-text')];
 const nInteractionsText = [...document.getElementsByClassName('ninteractions-text')];
 const fractionText = [...document.getElementsByClassName('fraction-text')];
@@ -28,6 +31,7 @@ restartButton.addEventListener('click', restart);
 numAgentsSlider.addEventListener('input', () => nAgentsText.forEach(t => t.innerHTML = numAgentsSlider.value));
 numInteractionsSlider.addEventListener('input', () => nInteractionsText.forEach(t => t.innerHTML = numInteractionsSlider.value));
 killFractionSlider.addEventListener('input', () => fractionText.forEach(t => t.innerHTML = int(killFractionSlider.value*100)));
+seed.addEventListener('input', () => randomizeSeed.checked = false);
 
 function recompute_params() {
     numAgents = int(numAgentsSlider.value);
@@ -45,6 +49,7 @@ function setup() {
     stats = createGraphics(graphSize, graphSize);
 
     agentColor = color(0, 255, 0, 80);
+    statsColor = color(0, 200, 255, 80);
     hLineColor = color(255, 255, 0, 40);
 
     restart();
@@ -76,6 +81,10 @@ function draw() {
 }
 
 function restart() {
+    if (randomizeSeed.checked) {
+        seed.value = int(Math.random()*1000000000);
+    }
+    randomSeed(int(seed.value));
     recompute_params();
     agents = [];
     for (let i = 0; i < numAgents; i++) agents.push(new Agent());
@@ -232,7 +241,7 @@ function draw_stats() {
     stats.stroke(hLineColor);
     stats.line(0, graphSize/2, graphSize, graphSize/2);
     stats.noStroke();
-    stats.fill(agentColor);
+    stats.fill(statsColor);
     agents.forEach(agent => {
         if (agent.interactions) {
             let x = agent.avg_payoff*kxs;
