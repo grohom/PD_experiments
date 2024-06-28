@@ -37,8 +37,8 @@ body {
     bottom: 0.3em;
 }
 
-.nagents_text,
-.ninteractions_text,
-.fraction_text {
+.nagents-text,
+.ninteractions-text,
+.fraction-text {
     color: yellow;
 }

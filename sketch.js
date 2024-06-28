@@ -1,4 +1,4 @@
-const graphSize = 500;
+const graphSize = 400;
 let agents = [];
 let cooperations = 0;
 let total_payoff = 0;
@@ -14,14 +14,15 @@ let agentColor;
 let hLineColor;
 let vLineColor;
 let canvas;
+let stats;
 
 const numAgentsSlider = document.getElementById('num-agents');
 const numInteractionsSlider = document.getElementById('num-interactions');
 const killFractionSlider = document.getElementById('kill-fraction');
 const restartButton = document.getElementById('restart-button');
-const nAgentsText = [...document.getElementsByClassName('nagents_text')];
-const nInteractionsText = [...document.getElementsByClassName('ninteractions_text')];
-const fractionText = [...document.getElementsByClassName('fraction_text')];
+const nAgentsText = [...document.getElementsByClassName('nagents-text')];
+const nInteractionsText = [...document.getElementsByClassName('ninteractions-text')];
+const fractionText = [...document.getElementsByClassName('fraction-text')];
 
 restartButton.addEventListener('click', restart);
 numAgentsSlider.addEventListener('input', () => nAgentsText.forEach(t => t.innerHTML = numAgentsSlider.value));
@@ -38,15 +39,16 @@ function recompute_params() {
 }
 
 function setup() {
-    canvas = createCanvas(graphSize, graphSize);
+    canvas = createCanvas(2*graphSize+10, graphSize);
     canvas.parent('graph');
+
+    stats = createGraphics(graphSize, graphSize);
 
     agentColor = color(0, 255, 0, 80);
     hLineColor = color(255, 255, 255, 50);
     vLineColor = color(255, 255, 0, 50);
 
     restart();
-
 }
 
 function draw() {
@@ -54,19 +56,24 @@ function draw() {
     let graph_payoff = total_payoff*kx;
     let graph_cooperations = graphSize - cooperations*ky;
 
-    background(0);
-
+    fill(0);
+    rect(0, 0, graphSize, graphSize);
+    noFill();
     stroke(hLineColor);
-    line(0, graph_cooperations, graphSize, graph_cooperations);
-
-    stroke(vLineColor);
-    line(graph_payoff, 0, graph_payoff, graphSize);
+    line(0, graphSize/2, graphSize, graphSize/2);
 
     noStroke();
     fill(agentColor);
     agents.forEach(agent => {
         ellipse(agent.learn*graphSize, agent.p0*graphSize, 4, 4);
     });
+
+    erase();
+    rect(graphSize, 0, graphSize+10, graphSize);
+    noErase();
+
+    draw_stats();
+    image(stats, graphSize+10, 0);
 
 }
 
@@ -101,9 +108,13 @@ function create_nasty_TFT(agent) {
 };
 
 function create_from_mouse(agent) {
-    agent.learn = map(mouseX, 0, width, 0, 1);
-    agent.p0 = map(mouseY, 0, height, 0, 1);
-    agent.reset();
+    learn = map(mouseX, 0, graphSize, 0, 1);
+    p0 = map(mouseY, 0, graphSize, 0, 1);
+    if (learn >= 0 && learn <= 1 && p0 >= 0 && p0 <= 1) {
+        agent.learn = learn;
+        agent.p0 = p0;
+        agent.reset();
+    }
 };
 
 function mutate(value, amplitude, min_val, max_val) {
@@ -156,26 +167,6 @@ class Agent {
 }
 
 function play_round() {
-    agents.forEach(agent => agent.avg_payoff = agent.interactions ? agent.payoff/agent.interactions : 0);
-    agents.sort((a, b) => b.avg_payoff - a.avg_payoff);
-    for (let i = 0; i < fraction; i++) {
-        good = agents[i];
-        bad = agents[numAgents - i - 1];
-        agents.forEach(agent => agent.memory.delete(bad));
-        bad.replace_with_child_of(good);
-    }
-
-    // if key "T" is pressed, create_TFT()
-    if (keyIsDown(84)) create_TFT(random(agents));
-    // if key "C" is pressed, create_cooperator()
-    if (keyIsDown(67)) create_cooperator(random(agents));
-    // if key "D" is pressed, create_defector()
-    if (keyIsDown(68)) create_defector(random(agents));
-    // if key "N" is pressed, create_nasty_TFT()
-    if (keyIsDown(78)) create_nasty_TFT(random(agents));
-    // if mouse is pressed, create a new agent with learn and p0 given by the mouse position
-    if (mouseIsPressed) create_from_mouse(random(agents));
-
     cooperations = 0;
     total_payoff = 0;
     for (let i = 0; i < numInteractions; i++) {
@@ -209,4 +200,44 @@ function play_round() {
             }
         }
     }
+
+    agents.forEach(agent => agent.avg_payoff = agent.interactions ? agent.payoff/agent.interactions : 0);
+    agents.sort((a, b) => b.avg_payoff - a.avg_payoff);
+    for (let i = 0; i < fraction; i++) {
+        good = agents[i];
+        bad = agents[numAgents - i - 1];
+        agents.forEach(agent => agent.memory.delete(bad));
+        bad.replace_with_child_of(good);
+    }
+
+    // if key "T" is pressed, create_TFT()
+    if (keyIsDown(84)) create_TFT(random(agents));
+    // if key "C" is pressed, create_cooperator()
+    if (keyIsDown(67)) create_cooperator(random(agents));
+    // if key "D" is pressed, create_defector()
+    if (keyIsDown(68)) create_defector(random(agents));
+    // if key "N" is pressed, create_nasty_TFT()
+    if (keyIsDown(78)) create_nasty_TFT(random(agents));
+    // if mouse is pressed, create a new agent with learn and p0 given by the mouse position
+    if (mouseIsPressed) create_from_mouse(random(agents));
+
+}
+
+function draw_stats() {
+    stats.background(0);
+    stats.noFill();
+    stats.stroke(vLineColor);
+    stats.line(graphSize/3, 0, graphSize/3, graphSize);
+    stats.line(2*graphSize/3, 0, 2*graphSize/3, graphSize);
+    stats.stroke(hLineColor);
+    stats.line(0, graphSize/2, graphSize, graphSize/2);
+    stats.noStroke();
+    stats.fill(agentColor);
+    agents.forEach(agent => {
+        if (agent.interactions) {
+            let x = agent.avg_payoff*graphSize/3;
+            let y = (1 - agent.cooperations/agent.interactions)*graphSize;
+            stats.ellipse(x, y, 4, 4);
+        }
+    });
 }
