@@ -18,13 +18,18 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;  
-/*    text-align: right;*/
     font-size: 0.9em;
-/*    margin: 1em;*/
+}
+
+#gugu {
+    position:relative;
+    margin-bottom: 1em;
 }
 
 #graph {
-    margin-bottom: 1em;
+    position:absolute;
+    top:99px;
+    left:156px;
 }
 
 #params {
@@ -41,4 +46,10 @@ body {
 .ninteractions-text,
 .fraction-text {
     color: yellow;
+}
+
+#bgnd {
+    width:1146px;
+    height:576.2px;
+    border:0;
 }

@@ -1,5 +1,6 @@
 const graphSize = 400;
 const kxs = graphSize/3;
+const borderSize = 20;
 
 let agents = [];
 
@@ -38,7 +39,7 @@ function recompute_params() {
 }
 
 function setup() {
-    canvas = createCanvas(2*graphSize+10, graphSize);
+    canvas = createCanvas(2*graphSize+borderSize, graphSize);
     canvas.parent('graph');
 
     stats = createGraphics(graphSize, graphSize);
@@ -66,11 +67,11 @@ function draw() {
     });
 
     erase();
-    rect(graphSize, 0, graphSize+10, graphSize);
+    rect(graphSize, 0, graphSize+borderSize, graphSize);
     noErase();
 
     draw_stats();
-    image(stats, graphSize+10, 0);
+    image(stats, graphSize+borderSize, 0);
 
 }
 
