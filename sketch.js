@@ -1,10 +1,10 @@
-const numAgents = 100;
-const numInteractions = 5000;
-const killFraction = 1/3;
 const graphSize = 500;
-const fraction = Math.floor(killFraction * numAgents);
-const kx = graphSize/numInteractions/2/2;
-const ky = graphSize/numInteractions/2;
+let numAgents;
+let numInteractions;
+let killFraction;
+let fraction;
+let kx;
+let ky;
 
 let agents = [];
 let cooperations = 0;
@@ -15,6 +15,28 @@ let reverseColor;
 let hLineColor;
 let vLineColor;
 let canvas;
+
+const numAgentsSlider = document.getElementById('num-agents');
+const numInteractionsSlider = document.getElementById('num-interactions');
+const killFractionSlider = document.getElementById('kill-fraction');
+const restartButton = document.getElementById('restart-button');
+const nAgentsText = [...document.getElementsByClassName('nagents_text')];
+const nInteractionsText = [...document.getElementsByClassName('ninteractions_text')];
+const fractionText = [...document.getElementsByClassName('fraction_text')];
+
+restartButton.addEventListener('click', restart);
+numAgentsSlider.addEventListener('input', () => nAgentsText.forEach(t => t.innerHTML = numAgentsSlider.value));
+numInteractionsSlider.addEventListener('input', () => nInteractionsText.forEach(t => t.innerHTML = numInteractionsSlider.value));
+killFractionSlider.addEventListener('input', () => fractionText.forEach(t => t.innerHTML = int(killFractionSlider.value*100)));
+
+function recompute_params() {
+    numAgents = int(numAgentsSlider.value);
+    numInteractions = int(numInteractionsSlider.value);
+    killFraction = float(killFractionSlider.value);
+    fraction = Math.floor(killFraction * numAgents);
+    kx = graphSize/numInteractions/2/2;
+    ky = graphSize/numInteractions/2;
+}
 
 function setup() {
     canvas = createCanvas(graphSize, graphSize);
@@ -51,11 +73,10 @@ function draw() {
 }
 
 function restart() {
+    recompute_params();
     agents = [];
     for (let i = 0; i < numAgents; i++) agents.push(new Agent());
 }
-
-document.getElementById('restart-button').addEventListener('click', restart);
 
 function create_TFT(agent) {
     agent.reverse = false;
