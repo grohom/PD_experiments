@@ -1,7 +1,7 @@
 const graphSize = 400;
+const kxs = graphSize/3;
+
 let agents = [];
-let cooperations = 0;
-let total_payoff = 0;
 
 let numAgents;
 let numInteractions;
@@ -12,7 +12,6 @@ let ky;
 
 let agentColor;
 let hLineColor;
-let vLineColor;
 let canvas;
 let stats;
 
@@ -45,19 +44,17 @@ function setup() {
     stats = createGraphics(graphSize, graphSize);
 
     agentColor = color(0, 255, 0, 80);
-    hLineColor = color(255, 255, 255, 50);
-    vLineColor = color(255, 255, 0, 50);
+    hLineColor = color(255, 255, 0, 40);
 
     restart();
 }
 
 function draw() {
     play_round();
-    let graph_payoff = total_payoff*kx;
-    let graph_cooperations = graphSize - cooperations*ky;
 
     fill(0);
     rect(0, 0, graphSize, graphSize);
+
     noFill();
     stroke(hLineColor);
     line(0, graphSize/2, graphSize, graphSize/2);
@@ -153,7 +150,6 @@ class Agent {
         this.interactions++;
         if (prediction === 0) {
             this.cooperations++;
-            cooperations++;
         }
         return prediction;
     }
@@ -167,8 +163,13 @@ class Agent {
 }
 
 function play_round() {
-    cooperations = 0;
-    total_payoff = 0;
+    agents.forEach(agent => {
+        agent.payoff = 0;
+        agent.avg_payoff = 0;
+        agent.interactions = 0;
+        agent.cooperations = 0;
+    });
+
     for (let i = 0; i < numInteractions; i++) {
         let a = random(agents);
         let b = random(agents);
@@ -181,22 +182,18 @@ function play_round() {
             if (actionB === 0) {
                 a.payoff += 2;
                 b.payoff += 2;
-                total_payoff += 4;
             }
             else {
                 b.payoff += 3;
-                total_payoff += 3;
             }
         }
         else {
             if (actionB === 0) {
                 a.payoff += 3;
-                total_payoff += 3;
             }
             else {
                 a.payoff++;
                 b.payoff++;
-                total_payoff += 2;
             }
         }
     }
@@ -210,6 +207,8 @@ function play_round() {
         bad.replace_with_child_of(good);
     }
 
+    // if key "R" is pressed, restart()
+    if (keyIsDown(82)) restart();
     // if key "T" is pressed, create_TFT()
     if (keyIsDown(84)) create_TFT(random(agents));
     // if key "C" is pressed, create_cooperator()
@@ -226,7 +225,7 @@ function play_round() {
 function draw_stats() {
     stats.background(0);
     stats.noFill();
-    stats.stroke(vLineColor);
+    stats.stroke(hLineColor);
     stats.line(graphSize/3, 0, graphSize/3, graphSize);
     stats.line(2*graphSize/3, 0, 2*graphSize/3, graphSize);
     stats.stroke(hLineColor);
@@ -235,7 +234,7 @@ function draw_stats() {
     stats.fill(agentColor);
     agents.forEach(agent => {
         if (agent.interactions) {
-            let x = agent.avg_payoff*graphSize/3;
+            let x = agent.avg_payoff*kxs;
             let y = (1 - agent.cooperations/agent.interactions)*graphSize;
             stats.ellipse(x, y, 4, 4);
         }

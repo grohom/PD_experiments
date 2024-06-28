@@ -6,12 +6,12 @@ body {
 
 #content {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 #explanation {
     padding: 0;
-    margin-left: 1em;
+    margin-top: 1em;
 }
 
 #simulation {
