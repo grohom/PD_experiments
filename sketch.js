@@ -1,4 +1,8 @@
 const graphSize = 500;
+let agents = [];
+let cooperations = 0;
+let total_payoff = 0;
+
 let numAgents;
 let numInteractions;
 let killFraction;
@@ -6,12 +10,7 @@ let fraction;
 let kx;
 let ky;
 
-let agents = [];
-let cooperations = 0;
-let total_payoff = 0;
-
-let normalColor;
-let reverseColor;
+let agentColor;
 let hLineColor;
 let vLineColor;
 let canvas;
@@ -42,8 +41,7 @@ function setup() {
     canvas = createCanvas(graphSize, graphSize);
     canvas.parent('graph');
 
-    normalColor = color(0, 255, 0, 80);
-    reverseColor = color(255, 100, 0, 80);
+    agentColor = color(0, 255, 0, 80);
     hLineColor = color(255, 255, 255, 50);
     vLineColor = color(255, 255, 0, 50);
 
@@ -65,8 +63,8 @@ function draw() {
     line(graph_payoff, 0, graph_payoff, graphSize);
 
     noStroke();
+    fill(agentColor);
     agents.forEach(agent => {
-        fill(agent.reverse ? reverseColor : normalColor);
         ellipse(agent.learn*graphSize, agent.p0*graphSize, 4, 4);
     });
 
@@ -79,35 +77,30 @@ function restart() {
 }
 
 function create_TFT(agent) {
-    agent.reverse = false;
     agent.learn = 1;
     agent.p0 = 0;
     agent.reset();
 };
 
 function create_cooperator(agent) {
-    agent.reverse = false;
     agent.learn = 0;
     agent.p0 = 0;
     agent.reset();
 };
 
 function create_defector(agent) {
-    agent.reverse = false;
     agent.learn = 0;
     agent.p0 = 1;
     agent.reset();
 };
 
 function create_nasty_TFT(agent) {
-    agent.reverse = false;
     agent.learn = 1;
     agent.p0 = 1;
     agent.reset();
 };
 
 function create_from_mouse(agent) {
-    // agent.reverse = false;
     agent.learn = map(mouseX, 0, width, 0, 1);
     agent.p0 = map(mouseY, 0, height, 0, 1);
     agent.reset();
@@ -118,8 +111,7 @@ function mutate(value, amplitude, min_val, max_val) {
 }
 
 class Agent {
-    constructor(reverse=null, p0=null, learn=null) {
-        this.reverse = reverse === null ? random() < 0.5 : reverse;
+    constructor(p0=null, learn=null) {
         this.p0 = p0 === null ? random() : p0;
         this.learn = learn === null ? random() : learn;
         this.reset();
@@ -147,22 +139,15 @@ class Agent {
         if (this.memory.has(other)) p = this.memory.get(other);
         else this.memory.set(other, p);
         let prediction = int(random() < p);
-        let action = this.instinct(prediction);
         this.interactions++;
-        if (action === 0) {
+        if (prediction === 0) {
             this.cooperations++;
             cooperations++;
         }
-        return action;
-    }
-
-    instinct(prediction) {
-        if (this.reverse) return 1 - prediction;
-        else return prediction;
+        return prediction;
     }
 
     replace_with_child_of(other) {
-        this.reverse = other.reverse;
         this.p0 = mutate(other.p0, 0.015, 0, 1);
         this.learn = mutate(other.learn, 0.015, 0, 1);
         this.reset();

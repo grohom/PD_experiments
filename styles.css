@@ -27,3 +27,18 @@ body {
     margin-bottom: 1em;
 }
 
+#params {
+    margin-top: 1em;
+    line-height: 2;
+}
+
+#params > label {
+    position: relative;
+    bottom: 0.3em;
+}
+
+.nagents_text,
+.ninteractions_text,
+.fraction_text {
+    color: yellow;
+}

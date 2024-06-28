@@ -15,14 +15,14 @@
             <div id="graph"></div>
             <button id="restart-button">Restart</button>
             <div id="params">
-            <input type="range" id="num-agents" min="10" max="200" step="10" value="100">
-            <label for="num-agents">number of agents</label>
-            <br>
-            <input type="range" id="num-interactions" min="1000" max="10000" step="1000" value="5000">
-            <label for="num-interactions">number of interactions</label>
-            <br>
-            <input type="range" id="kill-fraction" min="0.01" max="0.5" step="0.01" value="0.33">
-            <label for="kill-fraction">fraction of population to kill</label>
+                <input type="range" id="num-agents" min="10" max="200" step="10" value="100">
+                <label for="num-agents">number of agents</label>
+                <br>
+                <input type="range" id="num-interactions" min="1000" max="10000" step="1000" value="5000">
+                <label for="num-interactions">number of interactions</label>
+                <br>
+                <input type="range" id="kill-fraction" min="0.01" max="0.5" step="0.01" value="0.33">
+                <label for="kill-fraction">fraction of population to kill</label>
             </div>
         </div>
 
@@ -49,11 +49,7 @@
             </ul>
             <li>when interacting the first time with a new opponent, the initial prediction equals the average prediction (over all previous interactions of that agent)</li>
             <li>if there are no previous interactions (newborn agent) the initial prediction is a random number <code>p0</code> inherited genetically</li>
-            <li>having a prediction <code>p</code> of the opponent's action, an agent acts according to that prediction:</li>
-            <ul>
-                <li><span style="color:rgb(0, 200, 80)">normal</span> agents defect with probability <code>p</code> and cooperate with probability <code>1 - p</code></li>
-                <li><span style="color:rgb(255, 100, 0)">reverse</span> agents cooperate with probability <code>p</code> and defect with probability <code>1 - p</code></li>
-            </ul>
+            <li>having a prediction <code>p</code> of the opponent's action, an agent acts according to that prediction: it defects with probability <code>p</code> and cooperates with probability <code>1 - p</code></li>
             <li>after <span class="ninteractions_text">5000</span> random interactions, the agents are sorted by how many points they gained per interaction</li>
             <li>the bottom <span class="fraction_text">33</span>% die, and the top <span class="fraction_text">33</span>% reproduce in their place</li>
             <li>when an agent reproduces, the child inherits (with mutation) two parameters: <code>learn</code> and <code>p0</code> (whatever the parent has learned is not passed down)</li>
