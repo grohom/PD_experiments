@@ -47,9 +47,9 @@ function setup() {
     stats = createGraphics(graphSize, graphSize);
 
     agentColor = color(0, 255, 0, 80);
-    markedAgentColor = color(255, 128, 0, 80);
+    markedAgentColor = color(255, 128, 0, 100);
     statsColor = color(0, 200, 255, 80);
-    markedStatsColor = color(255, 0, 128, 80);
+    markedStatsColor = color(255, 0, 255, 100);
     hLineColor = color(255, 255, 0, 40);
 
     restart();
