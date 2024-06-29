@@ -10,7 +10,9 @@ let killFraction;
 let fraction;
 
 let agentColor;
+let markedAgentColor;
 let statsColor;
+let markedStatsColor;
 let hLineColor;
 let canvas;
 let stats;
@@ -45,7 +47,9 @@ function setup() {
     stats = createGraphics(graphSize, graphSize);
 
     agentColor = color(0, 255, 0, 80);
+    markedAgentColor = color(255, 128, 0, 80);
     statsColor = color(0, 200, 255, 80);
+    markedStatsColor = color(255, 0, 128, 80);
     hLineColor = color(255, 255, 0, 40);
 
     restart();
@@ -62,8 +66,8 @@ function draw() {
     line(0, graphSize/2, graphSize, graphSize/2);
 
     noStroke();
-    fill(agentColor);
     agents.forEach(agent => {
+        fill(agent.marked ? markedAgentColor : agentColor);
         ellipse(agent.learn*graphSize, agent.p0*graphSize, 4, 4);
     });
 
@@ -90,24 +94,28 @@ function create_TFT(agent) {
     agent.learn = 1;
     agent.p0 = 0;
     agent.reset();
+    agent.marked = true;
 };
 
 function create_cooperator(agent) {
     agent.learn = 0;
     agent.p0 = 0;
     agent.reset();
+    agent.marked = true;
 };
 
 function create_defector(agent) {
     agent.learn = 0;
     agent.p0 = 1;
     agent.reset();
+    agent.marked = true;
 };
 
 function create_nasty_TFT(agent) {
     agent.learn = 1;
     agent.p0 = 1;
     agent.reset();
+    agent.marked = true;
 };
 
 function create_from_mouse(agent) {
@@ -117,6 +125,7 @@ function create_from_mouse(agent) {
         agent.learn = learn;
         agent.p0 = p0;
         agent.reset();
+        agent.marked = true;
     }
 };
 
@@ -126,6 +135,7 @@ function mutate(value, amplitude, min_val, max_val) {
 
 class Agent {
     constructor(p0=null, learn=null) {
+        this.marked = false;
         this.p0 = p0 === null ? random() : p0;
         this.learn = learn === null ? random() : learn;
         this.reset();
@@ -161,6 +171,7 @@ class Agent {
     }
 
     replace_with_child_of(other) {
+        this.marked = other.marked;
         this.p0 = mutate(other.p0, 0.015, 0, 1);
         this.learn = mutate(other.learn, 0.015, 0, 1);
         this.reset();
@@ -237,9 +248,9 @@ function draw_stats() {
     stats.stroke(hLineColor);
     stats.line(0, graphSize/2, graphSize, graphSize/2);
     stats.noStroke();
-    stats.fill(statsColor);
     agents.forEach(agent => {
         if (agent.interactions) {
+            stats.fill(agent.marked ? markedStatsColor : statsColor);
             let x = agent.avg_payoff*kxs;
             let y = (1 - agent.cooperations/agent.interactions)*graphSize;
             stats.ellipse(x, y, 4, 4);
