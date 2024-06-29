@@ -8,8 +8,6 @@ let numAgents;
 let numInteractions;
 let killFraction;
 let fraction;
-let kx;
-let ky;
 
 let agentColor;
 let statsColor;
@@ -29,8 +27,8 @@ const fractionText = [...document.getElementsByClassName('fraction-text')];
 
 restartButton.addEventListener('click', restart);
 numAgentsSlider.addEventListener('input', () => nAgentsText.forEach(t => t.innerHTML = numAgentsSlider.value));
-numInteractionsSlider.addEventListener('input', () => nInteractionsText.forEach(t => t.innerHTML = numInteractionsSlider.value));
-killFractionSlider.addEventListener('input', () => fractionText.forEach(t => t.innerHTML = int(killFractionSlider.value*100)));
+numInteractionsSlider.addEventListener('input', () => nInteractionsText.forEach(t => {t.innerHTML = numInteractionsSlider.value; recompute_params()}));
+killFractionSlider.addEventListener('input', () => fractionText.forEach(t => {t.innerHTML = int(killFractionSlider.value*100); recompute_params()}));
 seed.addEventListener('input', () => randomizeSeed.checked = false);
 
 function recompute_params() {
@@ -38,8 +36,6 @@ function recompute_params() {
     numInteractions = int(numInteractionsSlider.value);
     killFraction = float(killFractionSlider.value);
     fraction = Math.floor(killFraction * numAgents);
-    kx = graphSize/numInteractions/2/2;
-    ky = graphSize/numInteractions/2;
 }
 
 function setup() {
