@@ -3,6 +3,7 @@ const kxs = graphSize/3;
 const borderSize = 20;
 
 let agents = [];
+let do_recompute = true;
 
 let numAgents;
 let numInteractions;
@@ -29,8 +30,8 @@ const fractionText = [...document.getElementsByClassName('fraction-text')];
 
 restartButton.addEventListener('click', restart);
 numAgentsSlider.addEventListener('input', () => nAgentsText.forEach(t => t.innerHTML = numAgentsSlider.value));
-numInteractionsSlider.addEventListener('input', () => {nInteractionsText.forEach(t => t.innerHTML = numInteractionsSlider.value); recompute_params()});
-killFractionSlider.addEventListener('input', () => {fractionText.forEach(t => t.innerHTML = int(killFractionSlider.value*100)); recompute_params()});
+numInteractionsSlider.addEventListener('input', () => {nInteractionsText.forEach(t => t.innerHTML = numInteractionsSlider.value); do_recompute = true});
+killFractionSlider.addEventListener('input', () => {fractionText.forEach(t => t.innerHTML = int(killFractionSlider.value*100)); do_recompute = true});
 seed.addEventListener('input', () => randomizeSeed.checked = false);
 
 function recompute_params() {
@@ -38,6 +39,7 @@ function recompute_params() {
     numInteractions = int(numInteractionsSlider.value);
     killFraction = float(killFractionSlider.value);
     fraction = Math.floor(killFraction * numAgents);
+    dorecompute = false;
 }
 
 function setup() {
@@ -56,6 +58,8 @@ function setup() {
 }
 
 function draw() {
+    if (do_recompute) recompute_params();
+
     play_round();
 
     fill(0);
