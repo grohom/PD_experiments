@@ -219,8 +219,8 @@ function play_round() {
                 b.payoff++;
             }
         }
-        a.avg_payoff = a.payoff/a.age;
-        b.avg_payoff = b.payoff/b.age;
+        a.avg_payoff = a.payoff/a.interactions;
+        b.avg_payoff = b.payoff/b.interactions;
         population_payoff += beta*(a.avg_payoff - population_payoff);
         population_payoff += beta*(b.avg_payoff - population_payoff);
         if (rnd() < killFraction && is_not_fit(a)) {
