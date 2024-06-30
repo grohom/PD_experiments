@@ -5,7 +5,7 @@ const borderSize = 20;
 let agents = [];
 let do_recompute = true;
 let population_payoff = 1.5;
-let beta = 0.01;
+let beta = 0.0005;
 
 let numAgents;
 let numInteractions;
@@ -16,6 +16,7 @@ let agentColor;
 let markedAgentColor;
 let statsColor;
 let markedStatsColor;
+let vLineColor;
 let hLineColor;
 let canvas;
 let stats;
@@ -59,6 +60,7 @@ function setup() {
     statsColor = color(0, 200, 255, 80);
     markedStatsColor = color(255, 0, 255, 100);
     hLineColor = color(255, 255, 0, 40);
+    vLineColor = color(255, 255, 255, 80);
 
     restart();
 }
@@ -262,6 +264,8 @@ function draw_stats() {
     stats.line(2*graphSize/3, 0, 2*graphSize/3, graphSize);
     stats.stroke(hLineColor);
     stats.line(0, graphSize/2, graphSize, graphSize/2);
+    stats.stroke(vLineColor);
+    stats.line(graphSize*population_payoff/3, 0, graphSize*population_payoff/3, graphSize);
     stats.noStroke();
     agents.forEach(agent => {
         if (agent.interactions) {
