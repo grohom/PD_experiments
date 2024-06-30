@@ -4,6 +4,8 @@ const borderSize = 20;
 
 let agents = [];
 let do_recompute = true;
+let population_payoff = 1.5;
+let beta = 0.01;
 
 let numAgents;
 let numInteractions;
@@ -34,12 +36,16 @@ numInteractionsSlider.addEventListener('input', () => {nInteractionsText.forEach
 killFractionSlider.addEventListener('input', () => {fractionText.forEach(t => t.innerHTML = int(killFractionSlider.value*100)); do_recompute = true});
 seed.addEventListener('input', () => randomizeSeed.checked = false);
 
+// https://stackoverflow.com/a/25984542/295155
+var rnd = Math.random;
+function shffle(a,b,c,d){c=a.length;while(c)b=rnd()*c--|0,d=a[c],a[c]=a[b],a[b]=d}
+
 function recompute_params() {
     numAgents = int(numAgentsSlider.value);
     numInteractions = int(numInteractionsSlider.value);
     killFraction = float(killFractionSlider.value);
     fraction = Math.floor(killFraction * numAgents);
-    dorecompute = false;
+    do_recompute = false;
 }
 
 function setup() {
@@ -86,7 +92,7 @@ function draw() {
 
 function restart() {
     if (randomizeSeed.checked) {
-        seed.value = int(Math.random()*1000000000);
+        seed.value = int(rnd()*1000000000);
     }
     randomSeed(int(seed.value));
     recompute_params();
@@ -140,15 +146,16 @@ function mutate(value, amplitude, min_val, max_val) {
 class Agent {
     constructor(p0=null, learn=null) {
         this.marked = false;
-        this.p0 = p0 === null ? random() : p0;
-        this.learn = learn === null ? random() : learn;
+        this.p0 = p0 === null ? rnd() : p0;
+        this.learn = learn === null ? rnd() : learn;
         this.reset();
     }
 
     reset() {
+        this.age = 1;
         this.p = this.p0;
         this.payoff = 0;
-        this.avg_payoff = 0;
+        this.avg_payoff = 1.5;
         this.interactions = 0;
         this.cooperations = 0;
         this.memory = new Map();
@@ -166,7 +173,7 @@ class Agent {
         let p = this.p;
         if (this.memory.has(other)) p = this.memory.get(other);
         else this.memory.set(other, p);
-        let prediction = int(random() < p);
+        let prediction = int(rnd() < p);
         this.interactions++;
         if (prediction === 0) {
             this.cooperations++;
@@ -184,14 +191,9 @@ class Agent {
 }
 
 function play_round() {
-    agents.forEach(agent => {
-        agent.payoff = 0;
-        agent.avg_payoff = 0;
-        agent.interactions = 0;
-        agent.cooperations = 0;
-    });
 
     for (let i = 0; i < numInteractions; i++) {
+        agents.forEach(agent => agent.age++);
         let a = random(agents);
         let b = random(agents);
         while (a === b) b = random(agents);
@@ -217,15 +219,19 @@ function play_round() {
                 b.payoff++;
             }
         }
-    }
-
-    agents.forEach(agent => agent.avg_payoff = agent.interactions ? agent.payoff/agent.interactions : 0);
-    agents.sort((a, b) => b.avg_payoff - a.avg_payoff);
-    for (let i = 0; i < fraction; i++) {
-        good = agents[i];
-        bad = agents[numAgents - i - 1];
-        agents.forEach(agent => agent.memory.delete(bad));
-        bad.replace_with_child_of(good);
+        a.avg_payoff = a.payoff/a.age;
+        b.avg_payoff = b.payoff/b.age;
+        population_payoff += beta*(a.avg_payoff - population_payoff);
+        population_payoff += beta*(b.avg_payoff - population_payoff);
+        if (rnd() < killFraction && is_not_fit(a)) {
+            agents.forEach(agent => agent.memory.delete(a));
+            let parent = a;
+            while ((parent.age === 0) || is_not_fit(parent) || (parent === a)) {
+                parent = random(agents);
+                population_payoff += beta*(parent.avg_payoff - population_payoff);
+            }
+            a.replace_with_child_of(parent);
+        }
     }
 
     // if key "R" is pressed, restart()
@@ -241,6 +247,11 @@ function play_round() {
     // if mouse is pressed, create a new agent with learn and p0 given by the mouse position
     if (mouseIsPressed) create_from_mouse(random(agents));
 
+}
+
+function is_not_fit(agent) {
+    let dif = population_payoff - agent.avg_payoff;
+    return dif < 2*rnd() - 1;
 }
 
 function draw_stats() {
