@@ -252,8 +252,9 @@ function play_round() {
 }
 
 function is_not_fit(agent) {
-    let dif = population_payoff - agent.avg_payoff;
-    return dif < 2*rnd() - 1;
+    let dif = agent.avg_payoff - population_payoff;
+    // return dif < 2*rnd() - 1;
+    return dif < 0;
 }
 
 function draw_stats() {

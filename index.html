@@ -21,11 +21,11 @@
                 <input type="range" id="num-agents" min="10" max="200" step="10" value="100">
                 <label for="num-agents"><span class="nagents-text">100</span> agents</label>
                 <br>
-                <input type="range" id="num-interactions" min="1000" max="10000" step="1000" value="5000">
-                <label for="num-interactions"><span class="ninteractions-text">5000</span> interactions</label>
+                <input type="range" id="num-interactions" min="100" max="1000" step="100" value="500">
+                <label for="num-interactions"><span class="ninteractions-text">500</span> interactions</label>
                 <br>
-                <input type="range" id="kill-fraction" min="0.01" max="0.5" step="0.01" value="0.33">
-                <label for="kill-fraction">kill <span class="fraction-text">33</span>% of the population</label>
+                <input type="range" id="kill-fraction" min="0.01" max="0.1" step="0.01" value="0.05">
+                <label for="kill-fraction"><span class="fraction-text">5</span>% death probability</label>
                 <br>
                 <input type="text" id="random-seed" value="42">
                 <label for="random-seed">seed</label>
@@ -41,7 +41,7 @@
 
             <ul>
             <li>there are <span class="nagents-text">100</span> agents</li>
-            <li>in each round they are paired randomly to play <span class="ninteractions-text">5000</span> Prisoner's Dilemmas:</li>
+            <li>in each round they are paired randomly to play <span class="ninteractions-text">500</span> Prisoner's Dilemmas:</li>
             <ul>
                 <li>if one cooperates and the other defects, the cooperator gets 0 points and the defector gets 3 points</li>
                 <li>if both cooperate, each gets 2 points</li>
@@ -59,14 +59,14 @@
             <li>when interacting the first time with a new opponent, the initial prediction equals the average prediction (over all previous interactions of that agent)</li>
             <li>if there are no previous interactions (newborn agent) the initial prediction is a random number <code>p0</code> inherited genetically</li>
             <li>having a prediction <code>p</code> of the opponent's action, an agent acts according to that prediction: it cooperates with probability <code>p</code> and defects with probability <code>1 - p</code></li>
-            <li>after <span class="ninteractions-text">5000</span> random interactions, the agents are sorted by how many points they gained per interaction</li>
-            <li>the bottom <span class="fraction-text">33</span>% die, and the top <span class="fraction-text">33</span>% reproduce in their place</li>
+            <li>after <span class="ninteractions-text">500</span> random interactions, the agents are sorted by how many points they gained per interaction</li>
+            <li>the bottom <span class="fraction-text">5</span>% die, and the top <span class="fraction-text">5</span>% reproduce in their place</li>
             <li>when an agent reproduces, the child inherits (with mutation) two parameters: <code>learn</code> and <code>p0</code> (whatever the parent has learned is not passed down)</li>
             </ul>
 
             <h2>The graphs</h2>
 
-            <p>After each round of <span class="ninteractions-text">5000</span> interactions, the pairs <code>(learn, p0)</code> are plotted for all agents:</p>
+            <p>After each round of <span class="ninteractions-text">500</span> interactions, the pairs <code>(learn, p0)</code> are plotted for all agents:</p>
             <ul>
                 <li>the left edge = agents dont't learn (they have "strong preconceptions")</li>
                 <li>the right edge = agents fully embrace any new information (the opponent's last action), forgetting the past</li>
