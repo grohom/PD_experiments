@@ -227,47 +227,44 @@ function play_round() {
     for (let i = 0; i < numInteractions; i++) {
         agents.forEach(agent => agent.age++);
 
-        // play
         let a = random(agents);
         let b = random(agents);
         while (a === b) b = random(agents);
 
-        let actionA = a.interact(b);
-        let actionB = b.interact(a);
-        a.observe(b, actionB);
-        b.observe(a, actionA);
-        if (actionA === 0) {
-            if (actionB === 0) {
-                a.payoff += 2;
-                b.payoff += 2;
+        if (rnd() > deathProb) {
+            // play
+            let actionA = a.interact(b);
+            let actionB = b.interact(a);
+            a.observe(b, actionB);
+            b.observe(a, actionA);
+            if (actionA === 0) {
+                if (actionB === 0) {
+                    a.payoff += 2;
+                    b.payoff += 2;
+                }
+                else {
+                    b.payoff += 3;
+                }
             }
             else {
-                b.payoff += 3;
+                if (actionB === 0) {
+                    a.payoff += 3;
+                }
+                else {
+                    a.payoff++;
+                    b.payoff++;
+                }
             }
+            a.update_fitness();
+            b.update_fitness();
         }
         else {
-            if (actionB === 0) {
-                a.payoff += 3;
+            // fight
+            if ((a.fitness ?? 1.5) < (b.fitness ?? 1.5)) {
+                let temp = a;
+                a = b;
+                b = temp;
             }
-            else {
-                a.payoff++;
-                b.payoff++;
-            }
-        }
-        a.update_fitness();
-        b.update_fitness();
-
-        // fight
-        a = random(agents);
-        b = random(agents);
-        while (a === b) b = random(agents);
-
-        if ((a.fitness ?? 1.5) < (b.fitness ?? 1.5)) {
-            let temp = a;
-            a = b;
-            b = temp;
-        }
-        if (rnd() < deathProb) {
             agents.forEach(agent => agent.memory.delete(b));
             b.replace_with_child_of(a);
         }

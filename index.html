@@ -23,8 +23,8 @@
                     <input type="range" id="num-interactions" min="100" max="10000" step="100" value="500">
                     <label for="num-interactions">update display every <span class="ninteractions-text">500</span> games</label>
                     <br>
-                    <input type="range" id="kill-fraction" min="0.001" max="0.02" step="0.001" value="0.005">
-                    <label for="kill-fraction"><span class="fraction-text">0.5</span>% fight probability</label>
+                    <input type="range" id="kill-fraction" min="0.001" max="0.02" step="0.001" value="0.003">
+                    <label for="kill-fraction"><span class="fraction-text">0.3</span>% fight probability</label>
                 </div>
                 <div id="params2">
                     <button id="restart-button">Restart</button> with seed
@@ -64,11 +64,11 @@
             <li>when playing the first time with a new opponent, the initial prediction equals the average prediction (over all previous games of that agent)</li>
             <li>if there are no previous games (newborn agent) the initial prediction is a random number <code>p0</code> inherited genetically</li>
             <li>having a prediction <code>p</code> of the opponent's action, an agent acts according to that prediction: it cooperates with probability <code>p</code> and defects with probability <code>1 - p</code></li>
-            <li>the fitness of each agent is the average number of points won per game:<br>
+            <li>the fitness of an agent is:<br>
             <code>fitness = points_won/games_played</code></li>
-            <li>after the game, with probability <span class="fraction-text">0.5</span>% there is a fight between two random agents:</li>
-            <li>the less fit one dies, and the fittest one reproduces in its place</li>
-            <li>when an agent reproduces, the child inherits (with mutation) two parameters: <code>learn</code> and <code>p0</code> (whatever the parent has learned is not passed down)</li>
+            <li>with probability <span class="fraction-text">0.3</span>%, instead of playing the game the two agents fight</li>
+            <li>the fittest one kills the other and reproduces in its place</li>
+            <li>the child inherits (with mutation) two parameters: <code>learn</code> and <code>p0</code> (whatever the parent has learned is not passed down)</li>
             </ul>
 
             <h2>The graphs</h2>
