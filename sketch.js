@@ -1,16 +1,16 @@
 const graphSize = 400;
-const kxs = graphSize/3;
 const borderSize = 20;
+const kxs = graphSize/3;
+const beta = 0.1;
 
 let agents = [];
-let do_recompute = true;
-let population_payoff = 1.5;
-let beta = 0.0005;
+let changed_params = true;
+let population_payoff;
+let max_age;
 
 let numAgents;
 let numInteractions;
-let killFraction;
-let fraction;
+let deathProb;
 
 let agentColor;
 let markedAgentColor;
@@ -23,7 +23,7 @@ let stats;
 
 const numAgentsSlider = document.getElementById('num-agents');
 const numInteractionsSlider = document.getElementById('num-interactions');
-const killFractionSlider = document.getElementById('kill-fraction');
+const deathProbSlider = document.getElementById('kill-fraction');
 const restartButton = document.getElementById('restart-button');
 const seed = document.getElementById('random-seed');
 const randomizeSeed = document.getElementById('randomize-seed');
@@ -33,8 +33,8 @@ const fractionText = [...document.getElementsByClassName('fraction-text')];
 
 restartButton.addEventListener('click', restart);
 numAgentsSlider.addEventListener('input', () => nAgentsText.forEach(t => t.innerHTML = numAgentsSlider.value));
-numInteractionsSlider.addEventListener('input', () => {nInteractionsText.forEach(t => t.innerHTML = numInteractionsSlider.value); do_recompute = true});
-killFractionSlider.addEventListener('input', () => {fractionText.forEach(t => t.innerHTML = int(killFractionSlider.value*100)); do_recompute = true});
+numInteractionsSlider.addEventListener('input', () => {nInteractionsText.forEach(t => t.innerHTML = numInteractionsSlider.value); changed_params = true});
+deathProbSlider.addEventListener('input', () => {fractionText.forEach(t => t.innerHTML = float(deathProbSlider.value*100).toFixed(1)); changed_params = true});
 seed.addEventListener('input', () => randomizeSeed.checked = false);
 
 // https://stackoverflow.com/a/25984542/295155
@@ -42,11 +42,9 @@ var rnd = Math.random;
 function shffle(a,b,c,d){c=a.length;while(c)b=rnd()*c--|0,d=a[c],a[c]=a[b],a[b]=d}
 
 function recompute_params() {
-    numAgents = int(numAgentsSlider.value);
     numInteractions = int(numInteractionsSlider.value);
-    killFraction = float(killFractionSlider.value);
-    fraction = Math.floor(killFraction * numAgents);
-    do_recompute = false;
+    deathProb = float(deathProbSlider.value);
+    changed_params = false;
 }
 
 function setup() {
@@ -59,14 +57,14 @@ function setup() {
     markedAgentColor = color(255, 128, 0, 100);
     statsColor = color(0, 200, 255, 80);
     markedStatsColor = color(255, 0, 255, 100);
-    hLineColor = color(255, 255, 0, 40);
-    vLineColor = color(255, 255, 255, 80);
+    vLineColor = color(255, 255, 0, 80);
+    hLineColor = color(255, 255, 255, 30);
 
     restart();
 }
 
 function draw() {
-    if (do_recompute) recompute_params();
+    if (changed_params) recompute_params();
 
     play_round();
 
@@ -79,7 +77,9 @@ function draw() {
 
     noStroke();
     agents.forEach(agent => {
-        fill(agent.marked ? markedAgentColor : agentColor);
+        let _color = agent.marked ? markedAgentColor : agentColor;
+        _color.setAlpha(map(agent.age, 0, max_age, 40, 128));
+        fill(_color);
         ellipse(agent.learn*graphSize, agent.p0*graphSize, 4, 4);
     });
 
@@ -92,12 +92,36 @@ function draw() {
 
 }
 
+function draw_stats() {
+    stats.background(0);
+    stats.noFill();
+    stats.stroke(hLineColor);
+    stats.line(graphSize/3, 0, graphSize/3, graphSize);
+    stats.line(2*graphSize/3, 0, 2*graphSize/3, graphSize);
+    stats.stroke(hLineColor);
+    stats.line(0, graphSize/2, graphSize, graphSize/2);
+    stats.stroke(vLineColor);
+    stats.line(graphSize*population_payoff/3, 0, graphSize*population_payoff/3, graphSize);
+    stats.noStroke();
+    agents.forEach(agent => {
+        if (agent.interactions) {
+            let _color = agent.marked ? markedStatsColor : statsColor;
+            _color.setAlpha(map(agent.age, 0, max_age, 40, 128));
+            stats.fill(_color);
+            let x = agent.fitness*kxs;
+            let y = (1 - agent.cooperations/agent.interactions)*graphSize;
+            stats.ellipse(x, y, 4, 4);
+        }
+    });
+}
+
 function restart() {
     if (randomizeSeed.checked) {
         seed.value = int(rnd()*1000000000);
     }
     randomSeed(int(seed.value));
-    recompute_params();
+    // recompute_params();
+    numAgents = int(numAgentsSlider.value);
     agents = [];
     for (let i = 0; i < numAgents; i++) agents.push(new Agent());
 }
@@ -154,10 +178,10 @@ class Agent {
     }
 
     reset() {
-        this.age = 1;
+        this.age = 0;
         this.p = this.p0;
         this.payoff = 0;
-        this.avg_payoff = 1.5;
+        this.fitness = null;
         this.interactions = 0;
         this.cooperations = 0;
         this.memory = new Map();
@@ -190,15 +214,24 @@ class Agent {
         this.reset();
     }
 
+    update_fitness() {
+        // if (this.fitness === null) this.fitness = this.payoff;
+        // else this.fitness += beta*(this.payoff/this.interactions - this.fitness);
+        this.fitness = this.payoff/this.interactions;
+    }
+
 }
 
 function play_round() {
 
     for (let i = 0; i < numInteractions; i++) {
         agents.forEach(agent => agent.age++);
+
+        // play
         let a = random(agents);
         let b = random(agents);
         while (a === b) b = random(agents);
+
         let actionA = a.interact(b);
         let actionB = b.interact(a);
         a.observe(b, actionB);
@@ -221,18 +254,22 @@ function play_round() {
                 b.payoff++;
             }
         }
-        a.avg_payoff = a.payoff/a.interactions;
-        b.avg_payoff = b.payoff/b.interactions;
-        population_payoff += beta*(a.avg_payoff - population_payoff);
-        population_payoff += beta*(b.avg_payoff - population_payoff);
-        if (rnd() < killFraction && is_not_fit(a)) {
-            agents.forEach(agent => agent.memory.delete(a));
-            let parent = a;
-            while ((parent.age === 0) || is_not_fit(parent) || (parent === a)) {
-                parent = random(agents);
-                population_payoff += beta*(parent.avg_payoff - population_payoff);
-            }
-            a.replace_with_child_of(parent);
+        a.update_fitness();
+        b.update_fitness();
+
+        // fight
+        a = random(agents);
+        b = random(agents);
+        while (a === b) b = random(agents);
+
+        if ((a.fitness ?? 1.5) < (b.fitness ?? 1.5)) {
+            let temp = a;
+            a = b;
+            b = temp;
+        }
+        if (rnd() < deathProb) {
+            agents.forEach(agent => agent.memory.delete(b));
+            b.replace_with_child_of(a);
         }
     }
 
@@ -249,31 +286,7 @@ function play_round() {
     // if mouse is pressed, create a new agent with learn and p0 given by the mouse position
     if (mouseIsPressed) create_from_mouse(random(agents));
 
-}
+    population_payoff = agents.reduce((sum, agent) => sum + agent.fitness, 0)/agents.length;
+    max_age = max(agents.map(agent => agent.age));
 
-function is_not_fit(agent) {
-    let dif = agent.avg_payoff - population_payoff;
-    // return dif < 2*rnd() - 1;
-    return dif < 0;
-}
-
-function draw_stats() {
-    stats.background(0);
-    stats.noFill();
-    stats.stroke(hLineColor);
-    stats.line(graphSize/3, 0, graphSize/3, graphSize);
-    stats.line(2*graphSize/3, 0, 2*graphSize/3, graphSize);
-    stats.stroke(hLineColor);
-    stats.line(0, graphSize/2, graphSize, graphSize/2);
-    stats.stroke(vLineColor);
-    stats.line(graphSize*population_payoff/3, 0, graphSize*population_payoff/3, graphSize);
-    stats.noStroke();
-    agents.forEach(agent => {
-        if (agent.interactions) {
-            stats.fill(agent.marked ? markedStatsColor : statsColor);
-            let x = agent.avg_payoff*kxs;
-            let y = (1 - agent.cooperations/agent.interactions)*graphSize;
-            stats.ellipse(x, y, 4, 4);
-        }
-    });
 }

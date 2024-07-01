@@ -32,12 +32,25 @@ body {
     left:156px;
 }
 
-#params {
-    margin-top: 1em;
-    line-height: 2;
+#controls {
+    position:relative;
+    left:-74px;
+    display: flex;
+    flex-direction: row;
+    gap:20px;
 }
 
-#params > label {
+#params1, #params2 {
+    margin-top: 1em;
+    line-height: 2;
+    border: 1px solid grey;
+    border-radius: 1em;
+    padding:1em;
+    padding-bottom:0.5em;
+}
+
+#params1 label,
+#params2 label {
     position: relative;
     bottom: 0.3em;
 }
@@ -48,7 +61,7 @@ body {
 }
 #randomize-seed {
     position:relative;
-    bottom: -0.1em;
+    bottom: -0.2em;
 }
 
 .nagents-text,
@@ -58,11 +71,11 @@ body {
 }
 
 #random-seed {
-    width:9.35em;
+    width:5em;
 }
 
 #bgnd {
     width:1146px;
     height:577px;
-    border:0;
+    margin-bottom:-3.5em;
 }
