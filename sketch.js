@@ -11,6 +11,10 @@ let max_age;
 let numAgents;
 let numInteractions;
 let deathProb;
+let learn_min;
+let learn_max;
+let p0_min;
+let p0_max;
 
 let agentColor;
 let markedAgentColor;
@@ -27,6 +31,10 @@ const deathProbSlider = document.getElementById('kill-fraction');
 const restartButton = document.getElementById('restart-button');
 const seed = document.getElementById('random-seed');
 const randomizeSeed = document.getElementById('randomize-seed');
+const learnMin = document.getElementById('learn-min');
+const learnMax = document.getElementById('learn-max');
+const p0Min = document.getElementById('p0-min');
+const p0Max = document.getElementById('p0-max');
 const nAgentsText = [...document.getElementsByClassName('nagents-text')];
 const nInteractionsText = [...document.getElementsByClassName('ninteractions-text')];
 const fractionText = [...document.getElementsByClassName('fraction-text')];
@@ -120,7 +128,10 @@ function restart() {
         seed.value = int(rnd()*1000000000);
     }
     randomSeed(int(seed.value));
-    // recompute_params();
+    learn_min = float(learnMin.value);
+    learn_max = float(learnMax.value);
+    p0_min = float(p0Min.value);
+    p0_max = float(p0Max.value);
     numAgents = int(numAgentsSlider.value);
     agents = [];
     for (let i = 0; i < numAgents; i++) agents.push(new Agent());
@@ -172,8 +183,8 @@ function mutate(value, amplitude, min_val, max_val) {
 class Agent {
     constructor(p0=null, learn=null) {
         this.marked = false;
-        this.p0 = p0 === null ? rnd() : p0;
-        this.learn = learn === null ? rnd() : learn;
+        this.p0 = p0 === null ? random(p0_min, p0_max) : p0;
+        this.learn = learn === null ? random(learn_min, learn_max) : learn;
         this.reset();
     }
 

@@ -35,6 +35,12 @@
                     <br>
                     <input type="range" id="num-agents" min="10" max="200" step="10" value="100">
                     <label for="num-agents"><span class="nagents-text">100</span> agents</label>
+                    <br>
+                    <input type="text" id="learn-min" value="0"> to
+                    <input type="text" id="learn-max" value="1"> learn
+                    <br>
+                    <input type="text" id="p0-min" value="0"> to
+                    <input type="text" id="p0-max" value="1"> p0
                 </div>
             </div>
             </div>
@@ -101,7 +107,9 @@
             <li><code>N</code> = Nasty Tit For Tat (start with defection, then copy the opponent's action)</li>
             </ul>
 
-            <p>Parameters on the left can be changed live. The right box is for restarting the simulation (press <code>R</code> or use the button).</p>
+            <p>Parameters on the left can be changed live.</p>
+
+            <p>The right box is for restarting the simulation (press <code>R</code> or use the button) – there you can set the number of agents and the limits for initializing <code>learn</code> and <code>p0</code>.</p>
 
             <p>Each time you (re)start, a new random seed will be generated. If you want to keep the seed (to replay a certain evolution), deselect the "randomize" checkbox. You can also paste some seed you liked and saved earlier.</p>
             
