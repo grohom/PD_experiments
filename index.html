@@ -61,26 +61,24 @@
                 <li>if <code>learn = 1</code>, the prediction equals the opponent's last action</li>
                 <li>if <code>0 &lt; learn &lt; 1</code>, the agent's prediction is a weighted average of the opponent's past actions (the weights decaying exponentially towards the past)</li>
             </ul>
-            <li>when playing the first time with a new opponent, the initial prediction equals the average prediction (over all previous games of that agent)</li>
-            <li>if there are no previous games (newborn agent) the initial prediction is a random number <code>p0</code> inherited genetically</li>
+            <li>when playing the first time with a new opponent, the initial prediction is a constant <code>p0</code> specific to each agent (inherited genetically)</li>
             <li>having a prediction <code>p</code> of the opponent's action, an agent acts according to that prediction: it cooperates with probability <code>p</code> and defects with probability <code>1 - p</code></li>
-            <li>the fitness of an agent is:<br>
-            <code>fitness = points_won/games_played</code></li>
-            <li>with probability <span class="fraction-text">0.3</span>%, instead of playing the game the two agents fight</li>
-            <li>the fittest one kills the other and reproduces in its place</li>
+            <li>an agent's fitness is <code>fitness = points_won/games_played</code></li>
+            <li>with probability <span class="fraction-text">0.3</span>%, the two agents engage in a fight instead of playing the game</li>
+            <li>during the fight the fittest one kills the other and reproduces in its place</li>
             <li>the child inherits (with mutation) two parameters: <code>learn</code> and <code>p0</code> (whatever the parent has learned is not passed down)</li>
             </ul>
 
-            <h2>The graphs</h2>
+            <h2>Graphs</h2>
 
-            <p>After each round of <span class="ninteractions-text">500</span> games, the pairs <code>(learn, p0)</code> are plotted for all agents:</p>
+            <p>After <span class="ninteractions-text">500</span> games, the pairs <code>(learn, p0)</code> are plotted for all agents (the graphic on the right):</p>
             <ul>
-                <li>the left edge = agents dont't learn (they have "strong preconceptions")</li>
-                <li>the right edge = agents fully embrace any new information (the opponent's last action), forgetting the past</li>
-                <li>the bottom edge = agents are born distrustful (before starting to learn, they predict that the opponent will defect)</li>
-                <li>the top edge = agents are born trustful (before starting to learn, they predict that the opponent will cooperate)</li>
+                <li>the left side = agents dont't learn (they have "strong preconceptions")</li>
+                <li>the right side = agents fully embrace any new information (the opponent's last action), forgetting the past</li>
+                <li>the bottom side = agents are born distrustful (before starting to learn, they predict that the opponent will defect)</li>
+                <li>the top side = agents are born trustful (before starting to learn, they predict that the opponent will cooperate)</li>
             </ul>
-            <p>The second graph shows for each agent:</p>
+            <p>The graph on the right shows for each agent:</p>
             <ul>
                 <li>on the horizontal axis: the fitness – i.e., the average number of points/game (min 0, max 3)</li>
                 <li>on the vertical axis: the percentage of cooperations</li>
@@ -88,9 +86,9 @@
 
             <p>On both graphs, younger agents are paler.</p>
 
-            <h2>Keys/Mouse</h2>
+            <h2>Controls</h2>
 
-            <p>Click somewhere in the first graph to generate an agent with that <code>(learn, p0)</code>.</p>
+            <p>Click somewhere in the left graph to generate an agent with that <code>(learn, p0)</code>.</p>
 
             <p>Or use the keyboard to generate "pure types":</p>
 
@@ -101,9 +99,9 @@
             <li><code>N</code> = Nasty Tit For Tat (start with defection, then copy the opponent's action)</li>
             </ul>
 
-            <p>After changing some parameters, press <code>R</code> to restart (or click the button).</p>
+            <p>Parameters on the left can be changed live. The right box is for restarting the simulation (press <code>R</code> or use the button).</p>
 
-            <p>Each time you (re)start, a new random seed will be generated. If you want keep the seed (to replay a certain evolution), deselect the "randomize" checkbox. You can also paste some seed you liked and saved earlier.</p>
+            <p>Each time you (re)start, a new random seed will be generated. If you want to keep the seed (to replay a certain evolution), deselect the "randomize" checkbox. You can also paste some seed you liked and saved earlier.</p>
             
         </div>
 

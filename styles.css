@@ -3,6 +3,14 @@ body {
     background-color: #2D2D2D;
     color: white;
     font-size: 0.8em;
+    width:75%;
+    margin: 0 auto;
+}
+
+h1 {
+    display: flex;
+    justify-content: center;
+    margin-bottom:-0.5em;
 }
 
 #content {
@@ -13,6 +21,7 @@ body {
 #explanation {
     padding: 0;
     margin-top: 1em;
+    padding-left: 8em;
 }
 
 #simulation {
@@ -34,7 +43,7 @@ body {
 
 #controls {
     position:relative;
-    left:-74px;
+    left:-65px;
     display: flex;
     flex-direction: row;
     gap:20px;
@@ -47,6 +56,13 @@ body {
     border-radius: 1em;
     padding:1em;
     padding-bottom:0.5em;
+}
+
+#params1 {
+    width:28em;
+}
+#params2 {
+    width:18em;
 }
 
 #params1 label,

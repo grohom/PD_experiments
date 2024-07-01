@@ -5,7 +5,7 @@ const beta = 0.1;
 
 let agents = [];
 let changed_params = true;
-let population_payoff;
+let population_mean_payoff;
 let max_age;
 
 let numAgents;
@@ -98,10 +98,10 @@ function draw_stats() {
     stats.stroke(hLineColor);
     stats.line(graphSize/3, 0, graphSize/3, graphSize);
     stats.line(2*graphSize/3, 0, 2*graphSize/3, graphSize);
-    stats.stroke(hLineColor);
+    stats.line(2*graphSize/3, 0, graphSize/3, graphSize);
     stats.line(0, graphSize/2, graphSize, graphSize/2);
     stats.stroke(vLineColor);
-    stats.line(graphSize*population_payoff/3, 0, graphSize*population_payoff/3, graphSize);
+    stats.line(graphSize*population_mean_payoff/3, 0, graphSize*population_mean_payoff/3, graphSize);
     stats.noStroke();
     agents.forEach(agent => {
         if (agent.interactions) {
@@ -192,7 +192,7 @@ class Agent {
         p += this.learn*(action - p);
         this.memory.set(other, p);
 
-        this.p += this.learn*(action - this.p);
+        // this.p = this.memory.values().reduce((a, b) => a + b, 0)/this.memory.size;
     }
 
     interact(other) {
@@ -283,7 +283,7 @@ function play_round() {
     // if mouse is pressed, create a new agent with learn and p0 given by the mouse position
     if (mouseIsPressed) create_from_mouse(random(agents));
 
-    population_payoff = agents.reduce((sum, agent) => sum + agent.fitness, 0)/agents.length;
+    population_mean_payoff = agents.reduce((sum, agent) => sum + agent.fitness, 0)/agents.length;
     max_age = max(agents.map(agent => agent.age));
 
 }
