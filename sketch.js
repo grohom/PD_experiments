@@ -130,8 +130,8 @@ function restart() {
     randomSeed(int(seed.value));
     learn_min = float(learnMin.value);
     learn_max = float(learnMax.value);
-    p0_min = float(p0Min.value);
-    p0_max = float(p0Max.value);
+    p0_min = 1 - float(p0Min.value);
+    p0_max = 1 - float(p0Max.value);
     numAgents = int(numAgentsSlider.value);
     agents = [];
     for (let i = 0; i < numAgents; i++) agents.push(new Agent());
