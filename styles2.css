@@ -1,0 +1,104 @@
+body {
+    font-family: helvetica, arial, sans-serif;
+    background-color: #2D2D2D;
+    color: white;
+    font-size: 0.8em;
+    width:75%;
+    margin: 0 auto;
+}
+
+h1 {
+    display: flex;
+    justify-content: center;
+    margin-bottom:-0.5em;
+}
+
+#content {
+    display: flex;
+    flex-direction: column;
+}
+
+#explanation {
+    padding: 0;
+    margin-top: 1em;
+    padding-left: 8em;
+}
+
+#simulation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+    font-size: 0.9em;
+}
+
+#graph-group {
+    position:relative;
+}
+
+#graph {
+    position:absolute;
+    top:99px;
+    left:156px;
+}
+
+#controls {
+    position:relative;
+    left:-65px;
+    display: flex;
+    flex-direction: row;
+    gap:20px;
+}
+
+#params1, #params2 {
+    margin-top: 1em;
+    line-height: 2;
+    border: 1px solid grey;
+    border-radius: 1em;
+    padding:1em;
+    padding-bottom:0.8em;
+}
+
+#params1 {
+    width:28em;
+}
+#params2 {
+    width:18em;
+}
+
+#params1 label,
+#params2 label {
+    position: relative;
+    bottom: 0.3em;
+}
+
+#random-seed + label,
+#randomize-seed + label {
+    bottom: 0.05em;
+}
+#randomize-seed {
+    position:relative;
+    bottom: -0.2em;
+}
+
+.nagents-text,
+.ninteractions-text,
+.fraction-text {
+    color: yellow;
+}
+
+#random-seed {
+    width:5em;
+}
+
+#bgnd {
+    width:1146px;
+    height:577px;
+    margin-bottom:-3.5em;
+}
+
+#learn-min,
+#learn-max,
+#p0-min,
+#p0-max {
+    width:3em;
+}
