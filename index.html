@@ -70,7 +70,7 @@
             <li>when playing the first time with a new opponent, the initial prediction is a constant <code>p0</code> specific to each agent (inherited genetically)</li>
             <li>having a prediction <code>p</code> of the opponent's action, an agent acts according to that prediction: it cooperates with probability <code>p</code> and defects with probability <code>1 - p</code></li>
             <li>an agent's fitness is <code>fitness = points_won/games_played</code></li>
-            <li>with probability <span class="fraction-text">0.3</span>%, the two agents engage in a fight instead of playing the game</li>
+            <li>with probability <span class="fraction-text">0.3</span>%, the two agents engage in a fight instead of playing the game (<a href="https://en.wikipedia.org/wiki/Moran_process">Moran Process</a></li>
             <li>during the fight the fittest one kills the other and reproduces in its place</li>
             <li>the child inherits (with mutation) two parameters: <code>learn</code> and <code>p0</code> (whatever the parent has learned is not passed down)</li>
             </ul>
